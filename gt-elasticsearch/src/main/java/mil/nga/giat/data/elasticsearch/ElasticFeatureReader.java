@@ -14,6 +14,7 @@ import mil.nga.giat.shaded.joda.time.format.DateTimeFormatter;
 import static mil.nga.giat.data.elasticsearch.ElasticConstants.DATE_FORMAT;
 import static mil.nga.giat.data.elasticsearch.ElasticConstants.FULL_NAME;
 
+import org.apache.commons.lang.StringUtils;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.store.ContentState;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -164,8 +165,7 @@ public class ElasticFeatureReader implements FeatureReader<SimpleFeatureType, Si
                 final Object value;
                 switch (arrayEncoding) {
                     case CSV:
-                        // only include first array element when using CSV array encoding
-                        value = values.get(0);
+                        value = StringUtils.join(values, ",");
                         break;
                     default:
                         value = values;
