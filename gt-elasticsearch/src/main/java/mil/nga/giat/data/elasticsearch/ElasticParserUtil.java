@@ -308,11 +308,10 @@ public class ElasticParserUtil {
         List<Object> values = new ArrayList<>();
         if (!keys.isEmpty()) {
 
-            Object entry = source.get(keys.get(0));
+            final Object entry = source.get(keys.get(0));
 
             if (entry == null) {
-                entry = source.get(name);
-                readField(entry, Collections.EMPTY_LIST, values);;
+                readField(source.get(name), Collections.EMPTY_LIST, values);;
             } else {
                 readField(entry, keys.subList(1, keys.size()), values);
             }
