@@ -30,6 +30,8 @@ public class ElasticHit {
 
     private Map<String,List<Object>> fields;
 
+    private Map<String,List<String>> highlight;
+
     public String getIndex() {
         return index;
     }
@@ -78,4 +80,11 @@ public class ElasticHit {
         return this.fields != null ? this.fields.get(name) : null;
     }
 
+    public Map<String, List<String>> getHighlight() {
+        return highlight;
+    }
+
+    public void setHighlight(Map<String, List<String>> highlight) {
+        this.highlight = highlight;
+    }
 }

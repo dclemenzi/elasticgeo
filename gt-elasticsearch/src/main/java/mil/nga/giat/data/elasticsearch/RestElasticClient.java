@@ -179,6 +179,10 @@ public class RestElasticClient implements ElasticClient {
             requestBody.put("aggregations", request.getAggregations());
         }
 
+        if (request.getHighlights() != null) {
+            requestBody.put("highlight", request.getHighlights());
+        }
+
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Elasticsearch request:\n" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestBody));
         }
