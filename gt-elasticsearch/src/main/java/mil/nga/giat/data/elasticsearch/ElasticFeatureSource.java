@@ -114,7 +114,7 @@ public class ElasticFeatureSource extends ContentFeatureSource {
         try {
             final ElasticDataStore dataStore = getDataStore();
             final String docType = dataStore.getDocType(entry.getName());
-            final boolean scroll = !useSortOrPagination(query) && dataStore.getScrollEnabled();
+            final boolean scroll = shouldScroll(query, dataStore);
             final ElasticRequest searchRequest = prepareSearchRequest(query, scroll);
             final ElasticResponse sr = dataStore.getClient().search(dataStore.getIndexName(), docType, searchRequest);
             if (LOGGER.isLoggable(Level.FINE)) {
@@ -141,19 +141,20 @@ public class ElasticFeatureSource extends ContentFeatureSource {
         final String docType = dataStore.getDocType(entry.getName());
 
         LOGGER.fine("Preparing " + docType + " (" + entry.getName() + ") query");
-        if (!scroll) {
-            if (query.getSortBy()!=null){
-                for (final SortBy sort : query.getSortBy()) {
-                    final String sortOrder = sort.getSortOrder().toSQL().toLowerCase();
-                    if (sort.getPropertyName() != null) {
-                        final String name = sort.getPropertyName().getPropertyName();
-                        searchRequest.addSort(name, sortOrder);
-                    } else if (sort == SortBy.NATURAL_ORDER || sort == SortBy.REVERSE_ORDER) {
-                        searchRequest.addSort("_uid", sortOrder);
-                    }
+
+        if (query.getSortBy()!=null){
+            for (final SortBy sort : query.getSortBy()) {
+                final String sortOrder = sort.getSortOrder().toSQL().toLowerCase();
+                if (sort.getPropertyName() != null) {
+                    final String name = sort.getPropertyName().getPropertyName();
+                    searchRequest.addSort(name, sortOrder);
+                } else if (sort == SortBy.NATURAL_ORDER || sort == SortBy.REVERSE_ORDER) {
+                    searchRequest.addSort("_uid", sortOrder);
                 }
             }
+        }
 
+        if (!scroll) {
             // pagination
             searchRequest.setSize(getSize(query));
             searchRequest.setFrom(getStartIndex(query));
@@ -239,9 +240,10 @@ public class ElasticFeatureSource extends ContentFeatureSource {
         }
     }
 
-    private boolean useSortOrPagination(Query query) {
-        return (query.getSortBy() != null && query.getSortBy().length > 0) ||
-                query.getStartIndex()!=null;
+    private boolean shouldScroll(Query query, ElasticDataStore dataStore) {
+        return dataStore.getScrollEnabled() &&
+                (query.getStartIndex() == null || query.getStartIndex() == 0) &&
+                (query.getMaxFeatures() > dataStore.getScrollSize());
     }
 
     private int getSize(Query query) {
