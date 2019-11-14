@@ -24,7 +24,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 
 /**
- * Builds a feature type based on the attributes defined in the 
+ * Builds a feature type based on the attributes defined in the
  * {@link ElasticLayerConfiguration}.
  *
  */
@@ -51,8 +51,13 @@ class ElasticFeatureTypeBuilder extends SimpleFeatureTypeBuilder {
                     } else if (attribute.getUseShortName()) {
                         attributeName = attribute.getShortName();
                     } else {
-                        attributeName = attribute.getName();
+                        if (attribute.getName().endsWith(".fields.keyword")) {
+                            attributeName = attribute.getName().replace(".fields.keyword", ".keyword");
+                        } else {
+                            attributeName = attribute.getName();
+                        }
                     }
+
 
                     AttributeDescriptor att = null;
                     if (Geometry.class.isAssignableFrom(attribute.getType())) {
@@ -79,7 +84,7 @@ class ElasticFeatureTypeBuilder extends SimpleFeatureTypeBuilder {
                     } else {
                         attributeBuilder.setName(attributeName);
                         attributeBuilder.setBinding(attribute.getType());
-                        att = attributeBuilder.buildDescriptor(attributeName, 
+                        att = attributeBuilder.buildDescriptor(attributeName,
                                 attributeBuilder.buildType());
                     }
                     if (att != null && attribute.getDateFormat() != null) {
