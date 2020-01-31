@@ -91,7 +91,7 @@ class ElasticFeatureTypeBuilder extends SimpleFeatureTypeBuilder {
                         att.getUserData().put(DATE_FORMAT, attribute.getDateFormat());
                     }
                     if (att != null) {
-                        att.getUserData().put(FULL_NAME, attribute.getName());
+                        att.getUserData().put(FULL_NAME, attributeName);
                         att.getUserData().put(ANALYZED, attribute.getAnalyzed());
                         att.getUserData().put(NESTED, attribute.isNested());
                         add(att);
