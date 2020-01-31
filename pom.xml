@@ -232,4 +232,14 @@
       </plugin>
     </plugins>
   </build>
+    <distributionManagement>
+        <repository>
+            <id>nexus-public</id>
+            <url>http://incadencenexus.incadencecorp.com:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-public</id>
+            <url>http://incadencenexus.incadencecorp.com:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>  
 </project>
