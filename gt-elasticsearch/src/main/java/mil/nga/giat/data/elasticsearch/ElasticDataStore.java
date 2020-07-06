@@ -286,7 +286,20 @@ public class ElasticDataStore extends ContentDataStore {
             docType = typeName.getLocalPart();
         }
         return docType;
-    }    
+    }
+
+    @Override
+    public void dispose()
+    {
+        super.dispose();
+
+        try
+        {
+            client.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void walk(List<ElasticAttribute> elasticAttributes, Map<String,Object> map, 
